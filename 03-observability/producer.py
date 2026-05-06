@@ -1,4 +1,5 @@
 import os
+import uuid
 import pika
 import json
 from dotenv import load_dotenv
@@ -21,7 +22,10 @@ channel = pika.BlockingConnection(connection_parameters).channel()
 channel.basic_publish(
     exchange="",
     routing_key=RABBITMQ_QUEUE,
-    # body=json.dumps({"msg": "ok"})
-    body=json.dumps({"fail": "ok"})
+    # body=json.dumps({"msg": "ok"}),
+    body=json.dumps({"fail": "ok"}),
+    properties=pika.BasicProperties(
+        correlation_id=str(uuid.uuid4())
+    )
 )
 

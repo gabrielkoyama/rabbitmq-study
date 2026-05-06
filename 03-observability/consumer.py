@@ -29,11 +29,12 @@ class Consumer:
         self.create_queues()
         self.es = Elasticsearch(ELASTIC_URL)
 
-    def send_log(self, status, msg, retry, processing_time):
+    def send_log(self, status, msg, task_id, retry, processing_time):
         doc = {
             "service": "worker",
             "status": status,
             "retry": retry,
+            "task_id": task_id,
             "msg": msg,
             "processing_time_ms": processing_time,
             "@timestamp": datetime.now(timezone.utc).isoformat()
@@ -68,10 +69,11 @@ class Consumer:
         
     def _callback(self, ch, method, properties, body):
         headers = properties.headers or {}
+        correlation_id = properties.correlation_id
         retries = headers.get("x-retry", 0)
         start = time.time()
         try:
-            print(f"Processing try {retries}")
+            print(f"Processing {correlation_id} try {retries}")
             time.sleep(2)
             if b"fail" in body:
                 raise Exception("Erro simulado")
@@ -79,6 +81,7 @@ class Consumer:
             self.send_log(
                 status="SUCCESS",
                 msg = "Finish",
+                task_id=correlation_id,
                 retry=0,
                 processing_time=int((time.time() - start) * 1000)
             )
@@ -88,6 +91,7 @@ class Consumer:
             self.send_log(
                 status="ERROR",
                 msg = f"Error: {e}",
+                task_id=correlation_id,
                 retry=retries,
                 processing_time=int((time.time() - start) * 1000)
             )
@@ -97,14 +101,15 @@ class Consumer:
                     exchange="",
                     routing_key=RETRY_QUEUE,
                     body=body,
-                    properties=pika.BasicProperties(headers=headers)
+                    properties=pika.BasicProperties(headers=headers, correlation_id=correlation_id)
                 )
                 print("Sending to retry queue")
             else:
                 ch.basic_publish(
                     exchange="",
                     routing_key=DLQ_QUEUE,
-                    body=body
+                    body=body,
+                    properties=pika.BasicProperties(headers=headers, correlation_id=correlation_id)
                 )
                 print("Sending to DLQ")
             ch.basic_ack(method.delivery_tag)

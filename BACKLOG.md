@@ -1,10 +1,7 @@
 # TODO 
  
-- Starting an elastic container - ok
-- Conection RabbitMQ Elastic - ok 
-- APM - ok 
-- Organize files
-- Observability
+
+- Observability and tracebility
 
 ## Backlog 
 
