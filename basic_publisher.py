@@ -1,6 +1,7 @@
 import pika
 import json
 
+
 RABBITMQ_HOST="localhost"
 RABBITMQ_USER="guest"
 RABBITMQ_PASSWORD="guest"
@@ -19,6 +20,6 @@ channel = pika.BlockingConnection(connection_parameters).channel()
 channel.basic_publish(
     exchange="",
     routing_key=RABBITMQ_QUEUE,
-    body=json.dumps({"teste": "ok outro "})
+    body=json.dumps({"msg": "ok"})
 )
 

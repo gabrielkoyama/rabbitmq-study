@@ -267,7 +267,7 @@ Now we can add that on callback, I will exaplain in parts.
         retries = headers.get("x-retry", 0)
 
         try:
-            print(f"Processando tentativa {retries}")
+            print(f"Processing trying {retries}")
             time.sleep(10)
 
             if b"fail" in body:
@@ -300,4 +300,17 @@ Now we can add that on callback, I will exaplain in parts.
                 print("Enviado para DLQ")
 
             ch.basic_ack(method.delivery_tag)
+```
+
+If, there is no "fail" on body the code will mock a processing of 10s and then send it back with ack (acknowledge). But, if anything wrong happens it will get an exception and if the number of retries is less than MAX_RETRIES go to RETRY_QUEUE, if retries > MAX_RETRIES go to DLQ.
+
+To test the code you just have to send a message to main_queue with "fail" in body. For example:
+
+```
+channel = pika.BlockingConnection(connection_parameters).channel()
+channel.basic_publish(
+    exchange="",
+    routing_key=RABBITMQ_QUEUE,
+    body=json.dumps({"fail": "ok"})
+)
 ```
