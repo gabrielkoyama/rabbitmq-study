@@ -1,12 +1,13 @@
+import os
 import pika
 import json
+from dotenv import load_dotenv
+load_dotenv()
 
-
-RABBITMQ_HOST="localhost"
-RABBITMQ_USER="guest"
-RABBITMQ_PASSWORD="guest"
-RABBITMQ_QUEUE="main_queue"
-
+RABBITMQ_HOST     = os.getenv("RABBITMQ_HOST")
+RABBITMQ_USER     = os.getenv("RABBITMQ_USER")
+RABBITMQ_PASSWORD = os.getenv("RABBITMQ_PASSWORD")
+RABBITMQ_QUEUE    = os.getenv("RABBITMQ_QUEUE")
 
 connection_parameters = pika.ConnectionParameters(
     host=RABBITMQ_HOST,
@@ -20,6 +21,7 @@ channel = pika.BlockingConnection(connection_parameters).channel()
 channel.basic_publish(
     exchange="",
     routing_key=RABBITMQ_QUEUE,
-    body=json.dumps({"msg": "ok"})
+    # body=json.dumps({"msg": "ok"})
+    body=json.dumps({"fail": "ok"})
 )
 

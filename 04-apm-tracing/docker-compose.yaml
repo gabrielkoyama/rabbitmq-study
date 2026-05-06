@@ -1,5 +1,7 @@
 version: "3.8"
 
+name: 'rabbitmq-apm'
+
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0

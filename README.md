@@ -1,14 +1,22 @@
-# Basic Publisher and Consumer RabbitMQ
+# RabbitMQ Study
 
-## Init container RabbitMQ
+Projeto prático evoluindo de uso básico até observabilidade e tracing.
 
-```
-    docker compose up 
-```
-Access RabbitMQ url: http://localhost:15672/
+## Etapas
 
-## Basic execution
+- 01-basic → publish/consume
+- 02-retry-dlq → tratamento de falhas
+- 03-observability → logs + elastic
+- 04-apm-tracing → tracing distribuído
 
-- python basic_consumer.py -- start listening messages and printing them
+## Stack
 
-- python basic_publisher.py -- publish message text
+- RabbitMQ
+- Python (pika)
+- Elasticsearch + Kibana
+- OpenTelemetry (ou Elastic APM)
+
+## Como rodar
+
+cd 01-basic
+docker-compose up
