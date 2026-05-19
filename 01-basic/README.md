@@ -63,11 +63,11 @@ I'll use a tool of a Docker, called Docker Compose to start RabbitMQ server. It 
     docker compose up
    ```
 
-   ![alt text](./docker-compose.png)
+   ![alt text](./rsc/docker-compose.png)
 
 Now, you can access RabbitMQ Management UI on URL: http://localhost:15672. Default username and password: guest.
 
-   ![alt text](./rabbitmq.png)
+   ![alt text](./rsc/rabbitmq.png)
 
    
 
@@ -85,20 +85,20 @@ Running consumer.py:
    ```
 If there is no error message it means that you are connected to RabbitMQ and listening the messages on queue. Now, let's publish a message running producer.py
 
-Running consumer.py:
+Running producer.py:
    ```bash
       cd .\01-basic
       python producer.py
    ```
 
-![alt text](./consumer-producer.png)
+![alt text](./rsc/consumer-producer.png)
 
 You can visualize the queue and messages on RabbitMQ:
 
-![alt text](./rabbimq-queues-1.png)
+![alt text](./rsc/rabbimq-queues-1.png)
 
 Or visualize the message without sending ack (acknowledge of receving the message)
-![alt text](./rabbitmq-queues-2.png)
+![alt text](./rsc/rabbitmq-queues-2.png)
 
 
 ## Message Acknowledgment
