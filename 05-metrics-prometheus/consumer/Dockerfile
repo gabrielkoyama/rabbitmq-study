@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 
 COPY consumer.py .
 
-CMD ["python", "consumer.py"]
+CMD ["python", "-u", "consumer.py"]

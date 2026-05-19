@@ -1,5 +1,4 @@
 # TODO 
- 
 
 - Observability and tracebility
 
@@ -15,10 +14,10 @@ Create basic queries:
 - Error per min 
 - Average time of processing 
 - Amount of retries Basic Metrics: 
-- Count messages processed 
-- Count of failed 
-- Count of messages on queue 
-- Average time of processing 
+    - Count messages processed 
+    - Count of failed 
+    - Count of messages on queue 
+    - Average time of processing 
 
 ### Simulate Infrastructure clusters 
 Create docker-compose with:

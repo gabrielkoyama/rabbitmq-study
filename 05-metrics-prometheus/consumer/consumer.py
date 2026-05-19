@@ -2,21 +2,21 @@ import pika
 
 import time
 import os
-from prometheus_client import Counter, Histogram, start_http_server
+from prometheus_client import Counter, Histogram, start_http_server, Gauge
 
 RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
 QUEUE = "main_queue"
 
 # métricas
-# messages_processed = Counter(
-#     "messages_processed_total",
-#     "Total de mensagens processadas"
-# )
-
 messages_processed = Counter(
     "messages_processed_total",
-    "Total de mensagens processadas",
+    "Total messages processed",
     ["status"]
+)
+
+queue_size = Gauge(
+    "rabbitmq_queue_messages",
+    "Messages in queue"
 )
 
 errors = Counter(
@@ -75,7 +75,9 @@ def main():
     connection = connect()
     channel = connection.channel()
 
-    channel.queue_declare(queue=QUEUE)
+    queue = channel.queue_declare(queue=QUEUE, passive=True)
+    queue_size.set(queue.method.message_count)
+
     channel.basic_qos(prefetch_count=1)
 
     channel.basic_consume(
