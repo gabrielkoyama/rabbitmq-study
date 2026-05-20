@@ -21,6 +21,6 @@ channel = pika.BlockingConnection(connection_parameters).channel()
 channel.basic_publish(
     exchange="",
     routing_key=RABBITMQ_QUEUE,
-    body=json.dumps({"msg": "ok"})
+    body=json.dumps({"fail": "test"})
 )
 

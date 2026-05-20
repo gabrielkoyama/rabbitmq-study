@@ -112,5 +112,36 @@ In case of failure, the system retries processing until the `MAX_RETRIES` limit 
             ch.basic_ack(method.delivery_tag)
 ```
 
-# Test and Execution
-To test the failure mechanism of the queues
+## Test and Execution
+To test the failure mechanism of the queues, let's send a message with 'fail' in content `{"fail": "test"}`.
+
+Don't forget to launch container as mentioned before on step-1 (`docker compose up`) and activate the environment. After that, we're going to start both consumer and producer.
+
+Running consumer.py:
+   ```bash
+    cd .\02-retry-dlq
+    python consumer.py
+   ```
+
+Running producer.py:
+   ```bash
+      cd .\02-retry-dlq
+      python producer.py
+   ```
+
+![alt text](./rsc/test01.png)
+
+You can visualize on RabbitMQ UI that there is one message on DLQ Queue.
+
+![alt text](./rsc/rabbitmqui1.png)
+![alt text](./rsc/rabbitmqui2.png)
+
+
+## Next step
+For the next step I'll implement observability to the system with Elasticsearch and Kibana for monitoring and visualization, while also improving logging structure.
+
+
+## References
+- [RabbitMQ Official Documentation](https://www.rabbitmq.com/docs)
+- [Pika Documentation](https://pika.readthedocs.io/en/stable/)
+

@@ -55,7 +55,7 @@ class Consumer:
         try:
             print(f"Processing try {retries}")
             if b"fail" in body:
-                raise Exception("Erro simulado")
+                raise Exception("Simulated Error")
             ch.basic_ack(method.delivery_tag)
             print("Finish")
 
