@@ -1,60 +1,57 @@
-version: "3.8"
-
-name: 'rabbitmq-apm'
+name: rabbitmq-apm-simple
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.1
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
-      - ELASTIC_PASSWORD=elastic
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=false
+      - xpack.security.enabled=false
     ports:
       - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.13.0
+    image: docker.elastic.co/kibana/kibana:7.17.18
     container_name: kibana
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_SERVICEACCOUNTTOKEN=AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS10b2tlbjp1QW1POGNVUFFLaXJKa21tT0phM29R
+      - xpack.security.enabled=false
     ports:
       - "5601:5601"
     depends_on:
       - elasticsearch
 
   apm-server:
-    image: docker.elastic.co/apm/apm-server:8.13.0
+    image: docker.elastic.co/apm/apm-server:7.17.18
     container_name: apm-server
     command: >
       apm-server -e
         -E apm-server.host=0.0.0.0:8200
         -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
-        -E output.elasticsearch.username=elastic
-        -E output.elasticsearch.password=elastic
+        -E apm-server.fleet.enabled=false
+        -E apm-server.data_streams.enabled=false
+        -E setup.template.enabled=true
+        -E setup.template.overwrite=true
+        -E setup.ilm.enabled=false
+        -E apm-server.register.ingest.pipeline.enabled=true
+        -E setup.kibana.host=http://kibana:5601
     ports:
       - "8200:8200"
     depends_on:
       - elasticsearch
 
-  elastic-agent:
-    image: docker.elastic.co/beats/elastic-agent:8.13.0
-    container_name: elastic-agent
-    depends_on:
-      - elasticsearch
-    environment:
-      - FLEET_ENROLL=1
-      - FLEET_ENROLLMENT_TOKEN=MXhCZi1aMEJYeHRDcnZQWUtndlM6TkVfcDFCZTNTQjZMTTFnUjl0SjVDQQ==
-      - FLEET_URL=http://kibana:5601
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: rabbitmq
     hostname: my-rabbit
     ports:
       - "5672:5672"
       - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  es_data:
+  rabbitmq_data:

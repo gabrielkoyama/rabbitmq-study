@@ -79,13 +79,15 @@ class Consumer:
         headers = properties.headers or {}
         retries = headers.get("x-retry", 0)
         start = time.time()
+        self.apm_client.begin_transaction("worker")
+
         try:
 
             print(f"Processing try {retries}")
             with capture_span("process_message", span_type="worker"):
                 time.sleep(2)
                 if b"fail" in body:
-                    raise Exception("Erro simulado")
+                    raise Exception("Simulated Error")
 
             self.send_log(
                 status="SUCCESS",
