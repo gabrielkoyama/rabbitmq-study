@@ -75,11 +75,11 @@ def main():
     connection = connect()
     channel = connection.channel()
 
-    queue = channel.queue_declare(queue=QUEUE, passive=True)
+    queue = channel.queue_declare(queue=QUEUE, durable=True)
     queue_size.set(queue.method.message_count)
 
-    channel.basic_qos(prefetch_count=1)
 
+    channel.basic_qos(prefetch_count=1)
     channel.basic_consume(
         queue=QUEUE,
         on_message_callback=callback,
